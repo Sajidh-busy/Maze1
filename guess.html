@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #game {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game">
+    <h1>Guess the Number!</h1>
+    <p>I'm thinking of a number between 1 and 100.</p>
+    <input type="number" id="guess" placeholder="Your guess" min="1" max="100">
+    <button id="submit">Submit Guess</button>
+    <div id="message"></div>
+</div>
+
+<script>
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    document.getElementById('submit').onclick = function() {
+        const userGuess = parseInt(document.getElementById('guess').value);
+        attempts++;
+
+        if (userGuess < 1 || userGuess > 100 || isNaN(userGuess)) {
+            document.getElementById('message').innerText = "Please enter a valid number between 1 and 100.";
+        } else if (userGuess < randomNumber) {
+            document.getElementById('message').innerText = "Too low! Try again.";
+        } else if (userGuess > randomNumber) {
+            document.getElementById('message').innerText = "Too high! Try again.";
+        } else {
+            document.getElementById('message').innerText = `Congratulations! You guessed it in ${attempts} attempts. The number was ${randomNumber}.`;
+        }
+
+        document.getElementById('guess').value = '';
+        document.getElementById('guess').focus();
+    };
+</script>
+
+</body>
+</html>
