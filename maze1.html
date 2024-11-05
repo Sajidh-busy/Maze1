@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Ball Dodging Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: lightblue;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const ball = {
+            x: 50,
+            y: canvas.height / 2,
+            radius: 15,
+            color: 'black',
+            speed: 2
+        };
+
+        const obstacles = [];
+        let score = 0;
+        let gameOver = false;
+
+        function createObstacle() {
+            const height = Math.random() * 100 + 20; // Random height for the obstacle
+            obstacles.push({ x: canvas.width, y: Math.random() * (canvas.height - height), width: 30, height });
+        }
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = 'red'; // Set a single color for obstacles
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                ctx.fillRect(obstacle.x, obstacle.y + obstacle.height + 100, obstacle.width, canvas.height - obstacle.height - 100); // Create space below
+            });
+        }
+
+        function update() {
+            if (gameOver) return;
+
+            // Move obstacles
+            obstacles.forEach(obstacle => {
+                obstacle.x -= ball.speed;
+            });
+
+            // Remove off-screen obstacles
+            if (obstacles.length && obstacles[0].x < -30) {
+                obstacles.shift();
+                score++;
+            }
+
+            // Check for collisions (disabled for free movement)
+            // If you want to keep the game running indefinitely, remove the collision check entirely.
+        }
+
+        function drawScore() {
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${score}`, 10, 20);
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            update();
+            drawBall();
+            drawObstacles();
+            drawScore();
+
+            if (!gameOver) {
+                requestAnimationFrame(gameLoop);
+            } else {
+                ctx.fillStyle = 'red';
+                ctx.font = '40px Arial';
+                ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2);
+            }
+        }
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp' && ball.y > ball.radius) {
+                ball.y -= 20; // Move up
+            } else if (event.key === 'ArrowDown' && ball.y < canvas.height - ball.radius) {
+                ball.y += 20; // Move down
+            }
+        });
+
+        setInterval(createObstacle, 2000); // Create a new obstacle every 2 seconds
+        gameLoop();
+    </script>
+</body>
+</html>
